@@ -1,0 +1,40 @@
+--KUI Stéphane, DOLSA Alexandre et BOULME Davy
+--SCRIPT POUR CREER LES TABLES
+
+-- Creation d'un type Entreprise pour pouvoir créer une table Entreprise
+CREATE OR REPLACE TYPE Entreprise_Ty AS OBJECT(
+NumEntreprise int,
+NomEntreprise VARCHAR2(30),	
+Ville VARCHAR2(30),
+Departement VARCHAR2(30)
+);
+
+
+-- Création de la table Entreprise
+CREATE TABLE Entreprise OF Entreprise_Ty(
+NumEntreprise PRIMARY KEY);
+
+
+
+-- Creation d'un type Stage pour pouvoir créer l'étudiant
+CREATE OR REPLACE TYPE Stage_Ty AS OBJECT(
+NumStage int,
+Annee DATE,
+Sujet VARCHAR2(50),
+Entreprise REF Entreprise_Ty
+);
+
+
+-- Creation d'un type Etudiant pour pouvoir créer la table étudiant
+CREATE OR REPLACE TYPE Etudiant_Ty AS OBJECT(
+NumEtudiant int,
+NomEtudiant VARCHAR2(20),
+PrenomEtudiant VARCHAR2(20),
+MailEtudiant VARCHAR2(50),
+Stage Stage_Ty
+);
+
+
+-- Création de la table Etudiant
+CREATE TABLE Etudiant OF Etudiant_Ty(
+NumEtudiant PRIMARY KEY);

@@ -1,0 +1,112 @@
+--KUI Stéphane, DOLSA Alexandre et BOULME Davy
+--SCRIPT POUR LES METHODES STOCKEES
+
+-- 1) récupérer le nombre d'étudiants avec stage cette année
+-- on regarde si l'annee de la date du stage est egale a celle de la date actuelle
+CREATE OR REPLACE FUNCTION nbEtudiantAvecStage
+RETURN number IS
+resultat number := 0;
+BEGIN
+SELECT COUNT(*) INTO resultat
+FROM ETUDIANT e
+WHERE extract(year from e.STAGE.Annee) = extract(year from sysdate); --on verifie ici
+RETURN resultat;
+END;
+
+
+-- 2) récupérer le nombre d'étudiants sans stage cette année
+CREATE OR REPLACE FUNCTION nbEtudiantSansStage
+RETURN number IS
+resultat number := 0;
+BEGIN
+SELECT COUNT(*) into resultat
+FROM ETUDIANT e
+WHERE extract(year from e.STAGE.Annee) <> extract(year from sysdate) OR e.Stage IS NULL;
+RETURN resultat;
+END;
+
+-- 3) récupérer le nombre d'étudiants sans stage à une certaine date pour une année précédente
+-- choisie par l'utilisateur
+CREATE OR REPLACE FUNCTION nbEtudiantSansStageAnnee(annee NUMBER)
+RETURN number IS
+resultat number := 0;
+BEGIN
+SELECT COUNT(*) into resultat
+FROM ETUDIANT e
+WHERE extract(year from e.STAGE.Annee) <> annee OR e.Stage IS NULL;
+RETURN resultat;
+END;
+
+
+
+-- 4) le nombre de stagiaires pris par chaque entreprise durant les n dernières années
+CREATE OR REPLACE PROCEDURE nbStagiaireParEntreprise(nbAnnees IN NUMBER, results OUT sys_refcursor) AS
+BEGIN
+open results for
+SELECT et.nomEntreprise as nom, COUNT(numEtudiant) as nbEtudiants
+FROM ETUDIANT e, ENTREPRISE et
+WHERE e.STAGE.Entreprise.numEntreprise = et.numEntreprise
+AND e.Stage.Annee > sysdate - (365 * nbAnnees)
+GROUP BY et.nomEntreprise;
+END;
+
+
+-- 5) le nombre moyen de stagiaires encadrés par les entreprises dans les n dernières années
+CREATE OR REPLACE FUNCTION nbMoyenEtudiantsDansEntreprise(nbAnnees IN NUMBER) RETURN NUMBER IS
+moyenne NUMBER(5) := 0;
+cpt NUMBER(5) := 0;
+CURSOR monCurseur IS
+SELECT COUNT(numEtudiant) as nbEtudiants
+FROM ETUDIANT e, ENTREPRISE et
+WHERE e.STAGE.Entreprise.numEntreprise = et.numEntreprise
+AND e.Stage.Annee > sysdate - (365 * nbAnnees)
+GROUP BY et.nomEntreprise;
+BEGIN
+for Cur IN monCurseur LOOP
+cpt := cpt + 1;
+moyenne := moyenne + Cur.nbEtudiants;
+END LOOP;
+moyenne := moyenne / cpt;
+return moyenne;
+END;
+
+
+-- 6) le nombre de stages par zone géographique choisi par l'utilisateur (département, ville)
+CREATE OR REPLACE FUNCTION nbStagesParZone(ville IN VARCHAR2, departement IN VARCHAR2)
+RETURN number IS
+resultat number := 0;
+BEGIN
+SELECT COUNT(*) into resultat
+FROM ETUDIANT et, ENTREPRISE e
+WHERE et.Stage.Entreprise.numEntreprise = e.numEntreprise
+AND e.ville = ville
+AND e.Departement = departement;
+
+RETURN resultat;
+END;
+
+
+-- 7) le nombre de stages pour toutes les zones géographiques (département, ville)
+CREATE OR REPLACE PROCEDURE nbStagiaireZone(result OUT sys_refcursor)AS
+BEGIN
+open result for
+SELECT e.ville, e.departement, COUNT(numEtudiant) as nbEtudiants
+FROM ETUDIANT et, ENTREPRISE e
+WHERE et.Stage.Entreprise.numEntreprise = e.numEntreprise
+GROUP BY e.ville, e.departement;
+END;
+
+
+-- 8) récupérer toutes les entreprises et leur contact ayant eu au moins un stage dans les n
+-- dernières années.
+CREATE OR REPLACE PROCEDURE contactEntreprise(nbAnnees IN NUMBER, results OUT sys_refcursor)
+AS
+BEGIN
+open results for
+SELECT en.nomEntreprise, et.nomEtudiant, et.prenomEtudiant, et.mailEtudiant
+FROM  ETUDIANT et, ENTREPRISE en
+WHERE en.numEntreprise = et.Stage.entreprise.numEntreprise
+AND et.Stage.Annee > sysdate - (365 * nbAnnees)
+GROUP BY en.nomEntreprise, et.nomEtudiant, et.prenomEtudiant , et.mailEtudiant
+ORDER BY en.nomEntreprise;
+END;

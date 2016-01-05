@@ -1,0 +1,75 @@
+--KUI Stéphane, DOLSA Alexandre et BOULME Davy
+--SCRIPT POUR INSERTION DANS LES TABLES
+
+
+--INSERTION DANS ENTREPRISE
+INSERT INTO Entreprise VALUES(1,'Sagem', 'Rueil-Malmaison', '92500');
+INSERT INTO Entreprise VALUES(2,'RATP', 'Palaiseau', 'Essonne');
+INSERT INTO Entreprise VALUES(3,'Nexter Robotics', 'Versailles', '78000');
+INSERT INTO Entreprise VALUES(4,'Improveus', 'Paris', 'Paris');
+INSERT INTO Entreprise VALUES(5,'Technocentre Renault', 'Guyancourt', '78280');
+INSERT INTO Entreprise VALUES(6,'Natixis', 'Paris', '75116');
+
+
+
+
+--INSERTION DANS ETUDIANT
+INSERT INTO Etudiant
+SELECT 1, 'DOLSA', 'Alexandre', 'alexandre.dolsa@u-psud.fr', Stage_Ty(1, TO_DATE('12/03/2015','DD/MM/YY'), 'Réseaux', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Sagem';
+
+INSERT INTO Etudiant
+SELECT 2, 'KUI', 'Stephane', 'stephane.kui@u-psud.fr', Stage_Ty(1, TO_DATE('12/09/2015','DD/MM/YY'), 'Réseaux', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Sagem';
+
+INSERT INTO Etudiant
+SELECT 3, 'BOULME', 'Davy', 'davy.boulme@u-psud.fr', Stage_Ty(2, TO_DATE('12/09/2015','DD/MM/YY'), 'Programmation', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'RATP';
+
+INSERT INTO Etudiant
+SELECT 4, 'OLIVEIRA', 'Joe', 'joe.oliveira@u-psud.fr', Stage_Ty(5, TO_DATE('19/12/2016','DD/MM/YY'), 'Programmation', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Technocentre Renault';
+
+INSERT INTO Etudiant
+SELECT 5, 'PHEULPIN', 'Marceau', 'marceau.pheulpin@u-psud.fr', Stage_Ty(5, TO_DATE('13/12/2015','DD/MM/YY'), 'Programmation', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Technocentre Renault';
+
+INSERT INTO Etudiant
+SELECT 6, 'PHILLOCHE', 'Corentin', 'corentin.philloche@u-psud.fr', Stage_Ty(6, TO_DATE('13/12/2015','DD/MM/YY'), 'Programmation', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Natixis';
+
+INSERT INTO Etudiant
+SELECT 7, 'LEMONIER', 'Simon', 'simon.lemonier@u-psud.fr', Stage_Ty(1, TO_DATE('13/12/2015','DD/MM/YY'), 'Reseau', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Sagem';
+
+INSERT INTO Etudiant
+SELECT 8, 'ROY', 'Aurelien', 'aurelien.roy@u-psud.fr', Stage_Ty(1, TO_DATE('10/09/2015','DD/MM/YY'), 'Programmation', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'Sagem';
+
+INSERT INTO Etudiant
+SELECT 9, 'GHILAIN', 'Pierre', 'pierre.ghilain@u-psud.fr', Stage_Ty(2, TO_DATE('10/09/2014','DD/MM/YY'), 'Reseau', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'RATP';
+
+INSERT INTO Etudiant
+SELECT 10, 'NADARAJAH', 'Johnatan', 'johnathan.nadarajah@u-psud.fr', Stage_Ty(2, TO_DATE('10/09/2015','DD/MM/YY'), 'Programmation', REF(e))
+FROM Entreprise e
+WHERE e.NomEntreprise = 'RATP';
+
+
+
+
+
+
+
+
+
+
